@@ -5,54 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rifa - Sorteos El Compa Casi</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f3f3f3;
-    padding: 20px;
-  }
-  .container {
-    background: white;
-    padding: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
-  }
-  h1 {
-    text-align: center;
-  }
-  .numbers {
-    padding: 10px 0;
-  }
-  .whatsapp-button {
-    background: #25D366;
-    padding: 10px;
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    text-decoration: none;
-    display: block;
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  .whatsapp-button:hover {
-    background: #1ebe57;
-  }
+  body { font-family: Arial,sans-serif; padding:20px; background:#f3f3f3; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(50px,1fr)); gap:10px; }
+  .number { padding:10px; text-align:center; border-radius:4px; cursor:pointer; }
+  .libre { background:#25D366; color:white; }
+  .ocupado { background:#ccc; color:#777; cursor:not-allowed; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🎟 Rifa - Sorteos El Compa Casi 🎟</h1>
-  <p>Participa en la rifa y gana un increíble premio. Selecciona tu número y envíame tu comprobante.</p>
+<h1>🎟 Rifa - Sorteos El Compa Casi 🎟</h1>
+<p>Haz clic en un número libre para apartarlo y envíame el comprobante por WhatsApp.</p>
+<div class="grid" id="grid"></div>
 
-  <h2>Números disponibles:</h2>
-  <div class="numbers">
-    <!-- Aquí puedes actualizar la lista de números -->
-    <p>1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...</p>
-  </div>
+<script>
+const apiUrl = "https://script.google.com/macros/s/AKfycbwueMPQhq2wkJH-liYmMd6HAJGwtOcwfhy1H_IfzJmfxhNj54NpiU7u9Xpces2sa6Ns/exec";
 
-  <!-- Enlace a tu WhatsApp -->
-  <a href="https://wa.me/526672108008?text=Hola%2C%20quiero%20participar%20en%20la%20rifa%2C%20adjunto%20mi%20comprobante." target="_blank" class="whatsapp-button">Enviar Comprobante por WhatsApp</a>
-</div>
+fetch(apiUrl)
+  .then(res => res.json())
+  .then(numeros => {
+    const grid = document.getElementById('grid');
+    numeros.forEach(num => {
+      const div = document.createElement('div');
+      div.textContent = num.numero;
+      div.className = 'number ' + num.estado;
+      if(num.estado === 'libre'){
+        div.onclick = () => window.open(
+          'https://wa.me/526672108008?text=Hola,%20quiero%20apartar%20el%20número%20' + num.numero,
+          '_blank'
+        );
+      }
+      grid.appendChild(div);
+    })
+  })
+  .catch(err => console.error(err));
+</script>
 </body>
 </html>
